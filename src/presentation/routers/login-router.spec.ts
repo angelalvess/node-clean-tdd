@@ -1,3 +1,6 @@
+import { badRequest, serverError } from "../helpers/http.helper"
+import { HttpResponse } from "../protocols/http"
+
 type HttpRequest = {
   body?: {
     email?: string
@@ -5,22 +8,13 @@ type HttpRequest = {
   }
 }
 
-type HttpResponse = {
-  statusCode: number
-}
-
 class LoginRouter {
   route(httpRequest?: HttpRequest): HttpResponse {
-    if (!httpRequest || !httpRequest.body) {
-      return {
-        statusCode: 500,
-      }
-    }
+    if (!httpRequest || !httpRequest.body)
+      return serverError("internal server error")
 
     const { email, password } = httpRequest!.body!
-    if (!email || !password) {
-      return { statusCode: 400 }
-    }
+    if (!email || !password) return badRequest("email or password is missing")
 
     return { statusCode: 200 }
   }
