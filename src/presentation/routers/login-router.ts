@@ -1,5 +1,3 @@
-import { MissingParamError } from "../errors/missing-param-error"
-
 import { serverError, badRequest, unauthorized } from "../helpers/http.helper"
 import { HttpRequest, HttpResponse } from "../protocols/http"
 
@@ -15,8 +13,8 @@ export class LoginRouter {
       return serverError("internal server error")
 
     const { email, password } = httpRequest!.body!
-    if (!email) return badRequest(new MissingParamError("email"))
-    if (!password) return badRequest(new MissingParamError("password"))
+    if (!email) return badRequest("email")
+    if (!password) return badRequest("password")
 
     this.authUseCase.auth(email, password)
 
