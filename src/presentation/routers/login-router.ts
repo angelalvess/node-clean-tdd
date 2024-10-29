@@ -6,21 +6,26 @@ import {
 import { HttpRequest, HttpResponse } from "../protocols/http"
 
 interface AuthUseCase {
-  auth(email: string, password: string): void
+  auth?(email: string, password: string): void
 }
 
 export class LoginRouter {
-  constructor(private readonly authUseCase: AuthUseCase) {}
+  constructor(private readonly authUseCase?: AuthUseCase) {}
 
   route(httpRequest?: HttpRequest): HttpResponse {
-    if (!httpRequest || !httpRequest.body)
+    if (
+      !httpRequest ||
+      !httpRequest.body ||
+      !this.authUseCase ||
+      !this.authUseCase.auth
+    )
       return serverError("internal server error")
 
     const { email, password } = httpRequest!.body!
     if (!email) return badRequest("email")
     if (!password) return badRequest("password")
 
-    this.authUseCase.auth(email, password)
+    this.authUseCase!.auth(email, password)
 
     return unauthorizedError()
   }

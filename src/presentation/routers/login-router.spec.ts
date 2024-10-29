@@ -91,4 +91,34 @@ describe("Login Router", () => {
     expect(httpResponse.statusCode).toBe(401)
     expect(httpResponse.body).toEqual(new UnauthorizedError())
   })
+
+  it("Should return 500 if no AuthUseCase is provided", () => {
+    const sut = new LoginRouter()
+
+    const httpRequest: HttpRequest = {
+      body: {
+        email: "any_email@gmail.com",
+        password: "any_password",
+      },
+    }
+    const httpResponse = sut.route(httpRequest)
+    expect(httpResponse.statusCode).toBe(500)
+  })
+
+  it("Should return 500 if  AuthUseCase has no auth", () => {
+    class AuthUseCase {}
+    const authUseCase = new AuthUseCase()
+
+    const sut = new LoginRouter(authUseCase)
+
+    const httpRequest: HttpRequest = {
+      body: {
+        email: "any_email@gmail.com",
+        password: "any_password",
+      },
+    }
+
+    const httpResponse = sut.route(httpRequest)
+    expect(httpResponse.statusCode).toBe(500)
+  })
 })
