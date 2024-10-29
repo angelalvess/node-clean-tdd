@@ -2,7 +2,7 @@ import { serverError, badRequest } from "../helpers/http.helper"
 import { HttpRequest, HttpResponse } from "../protocols/http"
 
 interface AuthUseCase {
-  auth(email: string): void
+  auth(email: string, password: string): void
 }
 
 export class LoginRouter {
@@ -16,7 +16,7 @@ export class LoginRouter {
     if (!email) return badRequest("email is missing")
     if (!password) return badRequest("password is missing")
 
-    this.authUseCase.auth(email)
+    this.authUseCase.auth(email, password)
 
     return { statusCode: 200 }
   }

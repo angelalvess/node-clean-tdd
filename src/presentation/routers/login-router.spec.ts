@@ -2,17 +2,20 @@ import { HttpRequest } from "../protocols/http"
 import { LoginRouter } from "./login-router"
 
 const makeSut = () => {
-  class AuthUseCase {
+  class AuthUseCaseSpy {
     email!: string
-    auth(email: string) {
+    password!: string
+
+    auth(email: string, password: string) {
       this.email = email
+      this.password = password
     }
   }
 
-  const authUseCase = new AuthUseCase()
+  const authUseCaseSpy = new AuthUseCaseSpy()
 
-  const sut = new LoginRouter(authUseCase)
-  return { sut, authUseCase }
+  const sut = new LoginRouter(authUseCaseSpy)
+  return { sut, authUseCaseSpy }
 }
 
 describe("Login Router", () => {
@@ -59,7 +62,7 @@ describe("Login Router", () => {
   })
 
   it("Should call AuthUseCase with correct params ", () => {
-    const { sut, authUseCase } = makeSut()
+    const { sut, authUseCaseSpy } = makeSut()
     const httpRequest: HttpRequest = {
       body: {
         email: "angie@gmail.com",
@@ -68,6 +71,7 @@ describe("Login Router", () => {
     }
     sut.route(httpRequest)
 
-    expect(authUseCase.email).toBe(httpRequest.body?.email)
+    expect(authUseCaseSpy.email).toBe(httpRequest.body?.email)
+    expect(authUseCaseSpy.password).toBe(httpRequest.body?.password)
   })
 })
