@@ -1,9 +1,13 @@
 import { HttpRequest } from "../protocols/http"
 import { LoginRouter } from "./login-router"
 
+const makeSut = () => {
+  return new LoginRouter()
+}
+
 describe("Login Router", () => {
   it("Should return 400 if no email is provided", () => {
-    const sut = new LoginRouter()
+    const sut = makeSut()
 
     const httpRequest: HttpRequest = {
       body: {
@@ -16,7 +20,7 @@ describe("Login Router", () => {
   })
 
   it("Should return 400 if no password is provided", () => {
-    const sut = new LoginRouter()
+    const sut = makeSut()
 
     const httpRequest: HttpRequest = {
       body: {
@@ -29,7 +33,7 @@ describe("Login Router", () => {
   })
 
   it("Should return 500 if no body is provided", () => {
-    const sut = new LoginRouter()
+    const sut = makeSut()
 
     const httpRequest: HttpRequest = {}
     const httpResponse = sut.route(httpRequest)
@@ -37,7 +41,7 @@ describe("Login Router", () => {
   })
 
   it("Should return 500 if no httpRequest is provided", () => {
-    const sut = new LoginRouter()
+    const sut = makeSut()
 
     const httpResponse = sut.route()
     expect(httpResponse.statusCode).toBe(500)
