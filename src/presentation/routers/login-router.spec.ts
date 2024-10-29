@@ -31,7 +31,7 @@ describe("Login Router", () => {
     }
     const httpResponse = sut.route(httpRequest)
     expect(httpResponse.statusCode).toBe(400)
-    expect(httpResponse.body).toBe("email is missings")
+    expect(httpResponse.body).toBe("email is missing")
   })
 
   it("Should return 400 if no password is provided", () => {
@@ -56,5 +56,6 @@ describe("Login Router", () => {
 
     const httpResponse = sut.route()
     expect(httpResponse.statusCode).toBe(500)
+    expect(httpResponse.body).toBe("internal server error")
   })
 })
