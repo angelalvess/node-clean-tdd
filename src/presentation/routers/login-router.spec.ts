@@ -14,7 +14,8 @@ class LoginRouter {
       return serverError("internal server error")
 
     const { email, password } = httpRequest!.body!
-    if (!email || !password) return badRequest("email or password is missing")
+    if (!email) return badRequest("email is missing")
+    if (!password) return badRequest("password is missing")
 
     return { statusCode: 200 }
   }
@@ -30,6 +31,7 @@ describe("Login Router", () => {
     }
     const httpResponse = sut.route(httpRequest)
     expect(httpResponse.statusCode).toBe(400)
+    expect(httpResponse.body).toBe("email is missings")
   })
 
   it("Should return 400 if no password is provided", () => {
@@ -41,6 +43,7 @@ describe("Login Router", () => {
     }
     const httpResponse = sut.route(httpRequest)
     expect(httpResponse.statusCode).toBe(400)
+    expect(httpResponse.body).toBe("password is missing")
   })
   it("Should return 500 if no body is provided", () => {
     const sut = new LoginRouter()
