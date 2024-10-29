@@ -12,10 +12,7 @@ type HttpResponse = {
 class LoginRouter {
   route(httpRequest: HttpRequest): HttpResponse {
     const { email, password } = httpRequest.body!
-    if (!email) {
-      return { statusCode: 400 }
-    }
-    if (!password) {
+    if (!email || !password) {
       return { statusCode: 400 }
     }
 
