@@ -12,7 +12,7 @@ export const serverError = (error: string): HttpResponse => ({
   body: error,
 })
 
-export const unauthorized = (): HttpResponse => ({
+export const unauthorizedError = (): HttpResponse => ({
   statusCode: 401,
   body: new UnauthorizedError(),
 })

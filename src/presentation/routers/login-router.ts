@@ -1,4 +1,8 @@
-import { serverError, badRequest, unauthorized } from "../helpers/http.helper"
+import {
+  serverError,
+  badRequest,
+  unauthorizedError,
+} from "../helpers/http.helper"
 import { HttpRequest, HttpResponse } from "../protocols/http"
 
 interface AuthUseCase {
@@ -18,6 +22,6 @@ export class LoginRouter {
 
     this.authUseCase.auth(email, password)
 
-    return unauthorized()
+    return unauthorizedError()
   }
 }
