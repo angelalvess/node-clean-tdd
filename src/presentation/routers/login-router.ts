@@ -6,7 +6,7 @@ import {
 import { HttpRequest, HttpResponse } from "../protocols/http"
 
 interface AuthUseCase {
-  auth?(email: string, password: string): void
+  auth?(email: string, password: string): null | string
 }
 
 export class LoginRouter {
@@ -25,8 +25,11 @@ export class LoginRouter {
     if (!email) return badRequest("email")
     if (!password) return badRequest("password")
 
-    this.authUseCase!.auth(email, password)
+    const acessToken = this.authUseCase!.auth(email, password)
+    if (!acessToken) {
+      return unauthorizedError()
+    }
 
-    return unauthorizedError()
+    return { statusCode: 200 }
   }
 }
