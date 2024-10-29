@@ -2,6 +2,7 @@ import {
   serverError,
   badRequest,
   unauthorizedError,
+  ok,
 } from "../helpers/http.helper"
 import { HttpRequest, HttpResponse } from "../protocols/http"
 
@@ -30,6 +31,6 @@ export class LoginRouter {
       return unauthorizedError()
     }
 
-    return { statusCode: 200 }
+    return ok()
   }
 }
