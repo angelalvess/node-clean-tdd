@@ -4,8 +4,9 @@ import { UnauthorizedError } from "../errors/unauthorized-error"
 
 import { HttpRequest } from "../protocols/http"
 import { LoginRouter } from "./login-router"
+import { ServerError } from "../errors/server-error"
 
-const makeSut = () => {
+const makeAuthUseCase = () => {
   class AuthUseCaseSpy {
     email!: string
     password!: string
@@ -17,8 +18,20 @@ const makeSut = () => {
       return this.acessToken
     }
   }
+  return new AuthUseCaseSpy()
+}
 
-  const authUseCaseSpy = new AuthUseCaseSpy()
+const makeAuthUseCaseWithError = () => {
+  class AuthUseCaseSpy {
+    auth() {
+      throw new Error()
+    }
+  }
+  return new AuthUseCaseSpy()
+}
+
+const makeSut = () => {
+  const authUseCaseSpy = makeAuthUseCase()
   authUseCaseSpy.acessToken = "validtoken"
 
   const sut = new LoginRouter(authUseCaseSpy)
@@ -58,6 +71,7 @@ describe("Login Router", () => {
     const httpRequest: HttpRequest = {}
     const httpResponse = sut.route(httpRequest)
     expect(httpResponse.statusCode).toBe(500)
+    expect(httpResponse.body).toEqual(new ServerError())
   })
 
   it("Should return 500 if no httpRequest is provided", () => {
@@ -65,6 +79,7 @@ describe("Login Router", () => {
 
     const httpResponse = sut.route()
     expect(httpResponse.statusCode).toBe(500)
+    expect(httpResponse.body).toEqual(new ServerError())
   })
 
   it("Should call AuthUseCase with correct params ", () => {
@@ -123,6 +138,22 @@ it("Should return 500 if no AuthUseCase is provided", () => {
   }
   const httpResponse = sut.route(httpRequest)
   expect(httpResponse.statusCode).toBe(500)
+  expect(httpResponse.body).toEqual(new ServerError())
+})
+
+it("Should return 500 if AuthUseCase throws", () => {
+  const authUseCaseSpy = makeAuthUseCaseWithError()
+  const sut = new LoginRouter(authUseCaseSpy)
+
+  const httpRequest: HttpRequest = {
+    body: {
+      email: "any_email@gmail.com",
+      password: "any_password",
+    },
+  }
+  const httpResponse = sut.route(httpRequest)
+  expect(httpResponse.statusCode).toBe(500)
+  expect(httpResponse.body).toEqual(new ServerError())
 })
 
 it("Should return 500 if  AuthUseCase has no auth", () => {

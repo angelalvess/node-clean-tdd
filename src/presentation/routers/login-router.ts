@@ -7,30 +7,27 @@ import {
 import { HttpRequest, HttpResponse } from "../protocols/http"
 
 interface AuthUseCase {
-  auth?(email: string, password: string): null | string
+  auth?(email: string, password: string): null | string | void
 }
 
 export class LoginRouter {
   constructor(private readonly authUseCase?: AuthUseCase) {}
 
   route(httpRequest?: HttpRequest): HttpResponse {
-    if (
-      !httpRequest ||
-      !httpRequest.body ||
-      !this.authUseCase ||
-      !this.authUseCase.auth
-    )
-      return serverError("internal server error")
+    try {
+      const { email, password } = httpRequest!.body!
+      if (!email) return badRequest("email")
+      if (!password) return badRequest("password")
 
-    const { email, password } = httpRequest!.body!
-    if (!email) return badRequest("email")
-    if (!password) return badRequest("password")
+      const acessToken = this.authUseCase!.auth!(email, password)
+      if (!acessToken) {
+        return unauthorizedError()
+      }
 
-    const acessToken = this.authUseCase!.auth(email, password)
-    if (!acessToken) {
-      return unauthorizedError()
+      return ok(acessToken)
+    } catch (error) {
+      console.error(error)
+      return serverError()
     }
-
-    return ok(acessToken)
   }
 }
