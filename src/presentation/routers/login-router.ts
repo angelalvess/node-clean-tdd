@@ -1,4 +1,6 @@
-import { serverError, badRequest } from "../helpers/http.helper"
+import { MissingParamError } from "../errors/missing-param-error"
+
+import { serverError, badRequest, unauthorized } from "../helpers/http.helper"
 import { HttpRequest, HttpResponse } from "../protocols/http"
 
 interface AuthUseCase {
@@ -13,11 +15,11 @@ export class LoginRouter {
       return serverError("internal server error")
 
     const { email, password } = httpRequest!.body!
-    if (!email) return badRequest("email is missing")
-    if (!password) return badRequest("password is missing")
+    if (!email) return badRequest(new MissingParamError("email"))
+    if (!password) return badRequest(new MissingParamError("password"))
 
     this.authUseCase.auth(email, password)
 
-    return { statusCode: 401 }
+    return unauthorized()
   }
 }

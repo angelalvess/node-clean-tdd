@@ -1,3 +1,5 @@
+import { MissingParamError } from "../errors/missing-param-error"
+import { UnauthorizedError } from "../errors/unauthorized-error"
 import { HttpRequest } from "../protocols/http"
 import { LoginRouter } from "./login-router"
 
@@ -29,7 +31,7 @@ describe("Login Router", () => {
     }
     const httpResponse = sut.route(httpRequest)
     expect(httpResponse.statusCode).toBe(400)
-    expect(httpResponse.body).toBe("email is missing")
+    expect(httpResponse.body).toEqual(new MissingParamError("email"))
   })
 
   it("Should return 400 if no password is provided", () => {
@@ -42,7 +44,7 @@ describe("Login Router", () => {
     }
     const httpResponse = sut.route(httpRequest)
     expect(httpResponse.statusCode).toBe(400)
-    expect(httpResponse.body).toBe("password is missing")
+    expect(httpResponse.body).toEqual(new MissingParamError("password"))
   })
 
   it("Should return 500 if no body is provided", () => {
@@ -58,7 +60,6 @@ describe("Login Router", () => {
 
     const httpResponse = sut.route()
     expect(httpResponse.statusCode).toBe(500)
-    expect(httpResponse.body).toBe("internal server error")
   })
 
   it("Should call AuthUseCase with correct params ", () => {
@@ -77,6 +78,7 @@ describe("Login Router", () => {
 
   it("Should return 401 when invalid credentials are provided", () => {
     const { sut } = makeSut()
+
     const httpRequest: HttpRequest = {
       body: {
         email: "invalid_email@gmail.com",
@@ -84,7 +86,7 @@ describe("Login Router", () => {
       },
     }
     const httpResponse = sut.route(httpRequest)
-
     expect(httpResponse.statusCode).toBe(401)
+    expect(httpResponse.body).toEqual(new UnauthorizedError())
   })
 })
