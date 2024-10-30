@@ -8,7 +8,7 @@
     "start:dev": "nodemon --watch \"src\" --exec \"ts-node -r tsconfig-paths/register src/index.ts\" -e ts",
     "husky:prepare": "husky install",
     "test": "jest --passWithNoTests",
-    "test:watch": "yarn test --watch",
+    "test:watch": "yarn test --watch --silent --verbose",
     "test:staged": "yarn test --findRelatedTests",
     "test:push": "yarn test --coverage",
     "prepare": "husky"
