@@ -10,7 +10,7 @@
     "test": "jest --passWithNoTests",
     "test:watch": "yarn test --watch --silent --verbose",
     "test:staged": "yarn test --findRelatedTests",
-    "test:push": "yarn test --coverage",
+    "test:push": "yarn test --coverage --silent --verbose",
     "prepare": "husky"
   },
   "keywords": [],
