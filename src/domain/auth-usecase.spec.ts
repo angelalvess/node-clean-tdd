@@ -23,7 +23,10 @@ class AuthUseCase implements IAuthUseCase {
       throw new InvalidParamError("loadUserByEmailRepository")
     }
 
-    await this.loadUserByEmailRepository?.load!(email)
+    const user = await this.loadUserByEmailRepository?.load!(email)
+    if (!user) {
+      return null
+    }
   }
 }
 
@@ -78,5 +81,12 @@ describe("Auth Usecase", () => {
     expect(promise).rejects.toThrow(
       new InvalidParamError("loadUserByEmailRepository"),
     )
+  })
+
+  it("Should return null if LoadUserByEmailRepository return null", async () => {
+    const { sut } = makeSut()
+    const acessToken = await sut.auth("any_email@gmail.com", "any_password")
+
+    expect(acessToken).toBeNull()
   })
 })
