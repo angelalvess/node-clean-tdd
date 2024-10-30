@@ -9,7 +9,7 @@ class AuthUseCase implements IAuthUseCase {
 }
 
 describe("Auth Usecase", () => {
-  it("Should thrw if no email is provided", async () => {
+  it("Should throw if no email is provided", async () => {
     const sut = new AuthUseCase()
 
     const promise = sut.auth()

@@ -1,4 +1,4 @@
-import { MissingParamError, InvalidParamError } from "../errors"
+import { MissingParamError, InvalidParamError } from "../../utils/errors"
 import { badRequest, serverError, unauthorizedError, ok } from "../helpers"
 import { HttpRequest, HttpResponse } from "../protocols"
 
