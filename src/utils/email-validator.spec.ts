@@ -1,13 +1,5 @@
-import validator from "validator"
-
-class EmailValidator {
-  email?: string
-
-  isValid(email: string): boolean {
-    this.email = email
-    return validator.isEmail(email)
-  }
-}
+import { EmailValidator } from "./email-validator"
+import { validator } from "../__mocks__/mock-validator"
 
 const makeSut = () => {
   return new EmailValidator()
@@ -23,8 +15,9 @@ describe("Email Validator", () => {
 
   it("Should return false if validator returns false", () => {
     const sut = makeSut()
+    validator.isEmailValid = false
 
-    const isEmailValid = sut.isValid("invalid_email")
+    const isEmailValid = sut.isValid("invalid_email@gmail.com")
     expect(isEmailValid).toBe(false)
   })
 
@@ -32,6 +25,6 @@ describe("Email Validator", () => {
     const sut = makeSut()
 
     sut.isValid("any_email@gmail.com")
-    expect(sut.email).toBe("any_email@gmail.com")
+    expect(validator.email).toBe("any_email@gmail.com")
   })
 })
