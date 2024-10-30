@@ -1,12 +1,6 @@
-import { InvalidParamError } from "../errors/invalid-param-error"
-import { MissingParamError } from "../errors/missing-param-error"
-import {
-  serverError,
-  badRequest,
-  unauthorizedError,
-  ok,
-} from "../helpers/http.helper"
-import { HttpRequest, HttpResponse } from "../protocols/http"
+import { MissingParamError, InvalidParamError } from "../errors"
+import { badRequest, serverError, unauthorizedError, ok } from "../helpers"
+import { HttpRequest, HttpResponse } from "../protocols"
 
 export interface IAuthUseCase {
   auth?(email: string, password: string): Promise<string | null | void>
