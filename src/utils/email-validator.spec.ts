@@ -1,9 +1,4 @@
-class EmailValidator {
-  isValid(email: string): boolean {
-    console.log(`The email is ${email}`)
-    return true
-  }
-}
+import { EmailValidator } from "./email-validator"
 
 describe("Email Validator", () => {
   test("Should return true if validator returns true", () => {
