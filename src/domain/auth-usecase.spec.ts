@@ -21,36 +21,37 @@ class AuthUseCase implements IAuthUseCase {
 }
 
 const makeSut = () => {
-  return new AuthUseCase()
+  class LoadUserByEmailRepositorySpy {
+    email!: string
+    async load(email: string) {
+      this.email = email
+    }
+  }
+
+  const loadUserByEmailRepositorySpy = new LoadUserByEmailRepositorySpy()
+
+  const sut = new AuthUseCase(loadUserByEmailRepositorySpy)
+  return { sut, loadUserByEmailRepositorySpy }
 }
 
 describe("Auth Usecase", () => {
   it("Should throw if no email is provided", async () => {
-    const sut = makeSut()
+    const { sut } = makeSut()
 
     const promise = sut.auth()
     expect(promise).rejects.toThrow(new MissingParamError("email"))
   })
 
   it("Should throw if no password is provided", async () => {
-    const sut = makeSut()
+    const { sut } = makeSut()
 
     const promise = sut.auth("any_email@gmail.com")
     expect(promise).rejects.toThrow(new MissingParamError("password"))
   })
 
   it("Should call LoadUserByEmailRepository with correct email", async () => {
-    class LoadUserByEmailRepositorySpy {
-      email!: string
-      async load(email: string) {
-        this.email = email
-      }
-    }
-
-    const loadUserByEmailRepository = new LoadUserByEmailRepositorySpy()
-    const sut = new AuthUseCase(loadUserByEmailRepository)
-
+    const { sut, loadUserByEmailRepositorySpy } = makeSut()
     await sut.auth("any_email@gmail.com", "any_password")
-    expect(loadUserByEmailRepository.email).toBe("any_email@gmail.com")
+    expect(loadUserByEmailRepositorySpy.email).toBe("any_email@gmail.com")
   })
 })
