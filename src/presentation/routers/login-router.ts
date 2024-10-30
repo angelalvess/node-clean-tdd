@@ -13,7 +13,7 @@ export interface IAuthUseCase {
 }
 
 export interface IEmailValidator {
-  isValid(email: string): boolean
+  isValid?(email: string): boolean
 }
 export class LoginRouter {
   constructor(
@@ -27,7 +27,7 @@ export class LoginRouter {
 
       if (!email) return badRequest(new MissingParamError("email"))
 
-      if (!this.emailValidator!.isValid(email)) {
+      if (!this.emailValidator!.isValid!(email)) {
         return badRequest(new InvalidParamError("email"))
       }
 
