@@ -13,7 +13,7 @@ export interface IAuthUseCase {
 }
 
 export interface IEmailValidator {
-  isValid?(email: string): boolean
+  isValid?(email: string): boolean | void
 }
 export class LoginRouter {
   constructor(
