@@ -95,14 +95,6 @@ describe("Auth Usecase", () => {
     expect(loadUserByEmailRepositorySpy.email).toBe("any_email@gmail.com")
   })
 
-  // it("Should throw if  LoadUserByEmailRepository has no passed", async () => {
-  //   const { encrypterSpy, tokenGeneratorSpy } = makeSut()
-  //   const sut = new AuthUseCase({}, encrypterSpy, tokenGeneratorSpy)
-  //   const promise = sut.auth("any_email@gmail.com", "any_password")
-
-  //   expect(promise).rejects.toThrow()
-  // })
-
   it("Should throw if  LoadUserByEmailRepository has no load method", async () => {
     const { encrypterSpy, tokenGeneratorSpy } = makeSut()
     const sut = new AuthUseCase({}, encrypterSpy, tokenGeneratorSpy)
