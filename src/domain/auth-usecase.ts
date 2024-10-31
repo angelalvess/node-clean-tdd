@@ -1,4 +1,4 @@
-import { InvalidParamError, MissingParamError } from "@/utils/errors"
+import { MissingParamError } from "@/utils/errors"
 import { IAuthUseCase } from "./protocols"
 
 interface ILoadUserByEmailRepository {
@@ -7,7 +7,7 @@ interface ILoadUserByEmailRepository {
 
 export class AuthUseCase implements IAuthUseCase {
   constructor(
-    private readonly loadUserByEmailRepository?: ILoadUserByEmailRepository,
+    private readonly loadUserByEmailRepository: ILoadUserByEmailRepository,
   ) {}
   async auth(email?: string, password?: string): Promise<string | null | void> {
     if (!email) {
@@ -15,13 +15,6 @@ export class AuthUseCase implements IAuthUseCase {
     }
     if (!password) {
       throw new MissingParamError("password")
-    }
-
-    if (!this.loadUserByEmailRepository) {
-      throw new MissingParamError("loadUserByEmailRepository")
-    }
-    if (!this.loadUserByEmailRepository.load) {
-      throw new InvalidParamError("loadUserByEmailRepository")
     }
 
     const user = await this.loadUserByEmailRepository?.load!(email)
