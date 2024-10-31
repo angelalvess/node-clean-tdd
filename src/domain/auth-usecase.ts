@@ -1,14 +1,16 @@
 import { MissingParamError } from "@/utils/errors"
 import {
   IAuthUseCase,
-  IEncrypterSpy,
+  IEncrypter,
   ILoadUserByEmailRepository,
+  ITokenGenerator,
 } from "./protocols"
 
 export class AuthUseCase implements IAuthUseCase {
   constructor(
     private readonly loadUserByEmailRepository: ILoadUserByEmailRepository,
-    private readonly encrypterSpy: IEncrypterSpy,
+    private readonly encrypter: IEncrypter,
+    private readonly tokenGenerator: ITokenGenerator,
   ) {}
 
   async auth(email?: string, password?: string): Promise<string | null | void> {
@@ -25,9 +27,11 @@ export class AuthUseCase implements IAuthUseCase {
       return null
     }
 
-    const isValid = await this.encrypterSpy.compare(password, user.password!)
+    const isValid = await this.encrypter.compare(password, user.password!)
     if (!isValid) {
       return null
     }
+
+    await this.tokenGenerator.generate(user.id!)
   }
 }
