@@ -1,4 +1,4 @@
-import { MissingParamError } from "@/utils/errors"
+import { InvalidParamError, MissingParamError } from "@/utils/errors"
 import { AuthUseCase } from "./auth-usecase"
 
 const makeSut = () => {
@@ -50,7 +50,7 @@ describe("Auth Usecase", () => {
     const promise = sut.auth("any_email@gmail.com", "any_password")
 
     expect(promise).rejects.toThrow(
-      new MissingParamError("loadUserByEmailRepository"),
+      new InvalidParamError("loadUserByEmailRepository"),
     )
   })
 

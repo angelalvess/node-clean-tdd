@@ -25,6 +25,7 @@ export class AuthUseCase implements IAuthUseCase {
     }
 
     const user = await this.loadUserByEmailRepository?.load!(email)
+
     if (!user) {
       return null
     }
