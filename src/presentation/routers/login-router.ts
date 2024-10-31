@@ -18,13 +18,13 @@ export class LoginRouter {
 
       if (!email) return badRequest(new MissingParamError("email"))
 
-      if (!this.emailValidator!.isValid!(email)) {
+      if (!this.emailValidator.isValid!(email)) {
         return badRequest(new InvalidParamError("email"))
       }
 
       if (!password) return badRequest(new MissingParamError("password"))
 
-      const acessToken = await this.authUseCase!.auth!(email, password)
+      const acessToken = await this.authUseCase.auth!(email, password)
       if (!acessToken) {
         return unauthorizedError()
       }
