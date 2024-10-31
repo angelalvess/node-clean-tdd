@@ -30,7 +30,6 @@ export class AuthUseCase implements IAuthUseCase {
       const accessToken = await this.tokenGenerator.generate(user.id!)
       return accessToken
     }
-
     return null
   }
 }
