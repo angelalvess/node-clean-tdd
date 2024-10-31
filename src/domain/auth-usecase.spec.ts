@@ -1,9 +1,14 @@
 import { MissingParamError } from "@/utils/errors"
 import { AuthUseCase } from "./auth-usecase"
-import { IEncrypterSpy, ILoadUserByEmailRepository } from "./protocols"
+import {
+  IEncrypter,
+  ILoadUserByEmailRepository,
+  ITokenGenerator,
+  User,
+} from "./protocols"
 
 const makeEncrypter = () => {
-  class EncrypterSpy implements IEncrypterSpy {
+  class EncrypterSpy implements IEncrypter {
     password!: string
     hashedPassword!: string
     isValid!: boolean
@@ -21,10 +26,10 @@ const makeEncrypter = () => {
 
 const makeLoadUserByEmailRepository = () => {
   class LoadUserByEmailRepositorySpy implements ILoadUserByEmailRepository {
-    user!: { password: string } | null
+    user!: User | null
     email!: string
 
-    async load(email: string) {
+    async load(email: string): Promise<User | null> {
       this.email = email
       return this.user
     }
@@ -33,16 +38,39 @@ const makeLoadUserByEmailRepository = () => {
   const loadUserByEmailRepositorySpy = new LoadUserByEmailRepositorySpy()
   loadUserByEmailRepositorySpy.user = {
     password: "hashed",
+    id: "any_id",
   }
   return loadUserByEmailRepositorySpy
+}
+
+const makeTokenGenerator = () => {
+  class TokenGeneratorSpy implements ITokenGenerator {
+    userId!: string
+    acessToken!: string | null
+
+    async generate(userId: string) {
+      this.userId = userId
+      return this.acessToken
+    }
+  }
+
+  const tokenGeneratorSpy = new TokenGeneratorSpy()
+  tokenGeneratorSpy.acessToken = "any_token"
+  return tokenGeneratorSpy
 }
 
 const makeSut = () => {
   const encrypterSpy = makeEncrypter()
   const loadUserByEmailRepositorySpy = makeLoadUserByEmailRepository()
-  const sut = new AuthUseCase(loadUserByEmailRepositorySpy, encrypterSpy)
+  const tokenGeneratorSpy = makeTokenGenerator()
 
-  return { sut, loadUserByEmailRepositorySpy, encrypterSpy }
+  const sut = new AuthUseCase(
+    loadUserByEmailRepositorySpy,
+    encrypterSpy,
+    tokenGeneratorSpy,
+  )
+
+  return { sut, loadUserByEmailRepositorySpy, encrypterSpy, tokenGeneratorSpy }
 }
 
 describe("Auth Usecase", () => {
@@ -68,8 +96,8 @@ describe("Auth Usecase", () => {
   })
 
   it("Should throw if  LoadUserByEmailRepository has no load method", async () => {
-    const { encrypterSpy } = makeSut()
-    const sut = new AuthUseCase({}, encrypterSpy)
+    const { encrypterSpy, tokenGeneratorSpy } = makeSut()
+    const sut = new AuthUseCase({}, encrypterSpy, tokenGeneratorSpy)
     const promise = sut.auth("any_email@gmail.com", "any_password")
 
     expect(promise).rejects.toThrow()
@@ -102,5 +130,12 @@ describe("Auth Usecase", () => {
     expect(encrypterSpy.hashedPassword).toBe(
       loadUserByEmailRepositorySpy.user?.password,
     )
+  })
+
+  it("Should call TokenGenerator with correct UserId", async () => {
+    const { sut, tokenGeneratorSpy, loadUserByEmailRepositorySpy } = makeSut()
+    await sut.auth("any_email@gmail.com", "any_password")
+
+    expect(tokenGeneratorSpy.userId).toBe(loadUserByEmailRepositorySpy.user?.id)
   })
 })
