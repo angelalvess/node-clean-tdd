@@ -24,12 +24,12 @@ export class LoginRouter {
 
       if (!password) return badRequest(new MissingParamError("password"))
 
-      const acessToken = await this.authUseCase.auth!(email, password)
-      if (!acessToken) {
+      const accessToken = await this.authUseCase.auth!(email, password)
+      if (!accessToken) {
         return unauthorizedError()
       }
 
-      return ok(acessToken)
+      return ok(accessToken)
     } catch (error) {
       console.error(error)
       return serverError()

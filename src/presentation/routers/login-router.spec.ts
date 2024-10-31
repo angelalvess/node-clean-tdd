@@ -9,16 +9,16 @@ const makeAuthUseCase = () => {
   class AuthUseCaseSpy implements IAuthUseCase {
     email!: string
     password!: string
-    acessToken!: null | string
+    accessToken!: null | string
 
     async auth(email: string, password: string) {
       this.email = email
       this.password = password
-      return this.acessToken
+      return this.accessToken
     }
   }
   const authUseCaseSpy = new AuthUseCaseSpy()
-  authUseCaseSpy.acessToken = "valid_token"
+  authUseCaseSpy.accessToken = "valid_token"
   return authUseCaseSpy
 }
 
@@ -75,7 +75,7 @@ describe("Login Router", () => {
 
     const httpResponse = await sut.route(httpRequest)
     expect(httpResponse.statusCode).toBe(200)
-    expect(httpResponse.body).toEqual(authUseCaseSpy.acessToken)
+    expect(httpResponse.body).toEqual(authUseCaseSpy.accessToken)
   })
 })
 
@@ -122,7 +122,7 @@ it("Should return 400 if a invalid email is provided", async () => {
 
 it("Should return 401 when invalid credentials are provided", async () => {
   const { sut, authUseCaseSpy } = makeSut()
-  authUseCaseSpy.acessToken = null
+  authUseCaseSpy.accessToken = null
 
   const httpRequest: HttpRequest = {
     body: {

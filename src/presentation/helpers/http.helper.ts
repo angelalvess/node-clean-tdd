@@ -16,7 +16,7 @@ export const unauthorizedError = (): HttpResponse => ({
   body: new UnauthorizedError(),
 })
 
-export const ok = (acessToken: string): HttpResponse => ({
+export const ok = (accessToken: string): HttpResponse => ({
   statusCode: 200,
-  body: acessToken,
+  body: accessToken,
 })
