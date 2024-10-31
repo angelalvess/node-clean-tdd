@@ -13,7 +13,9 @@ type AuthUseCaseParams = {
 }
 
 export class AuthUseCase implements IAuthUseCase {
-  constructor(private readonly dependencies: AuthUseCaseParams) {}
+  constructor(
+    private readonly dependencies: AuthUseCaseParams = {} as AuthUseCaseParams,
+  ) {}
 
   async auth(email?: string, password?: string): Promise<string | null | void> {
     const { loadUserByEmailRepository, encrypter, tokenGenerator } =
