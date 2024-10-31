@@ -1,8 +1,9 @@
 import { UnauthorizedError } from "../errors/unauthorized-error"
 import { HttpRequest } from "../protocols/http"
-import { IAuthUseCase, IEmailValidator, LoginRouter } from "./login-router"
+import { IEmailValidator, LoginRouter } from "./login-router"
 import { ServerError } from "../errors/server-error"
 import { InvalidParamError, MissingParamError } from "../../utils/errors"
+import { IAuthUseCase } from "@/domain/protocols"
 
 const makeAuthUseCase = () => {
   class AuthUseCaseSpy implements IAuthUseCase {

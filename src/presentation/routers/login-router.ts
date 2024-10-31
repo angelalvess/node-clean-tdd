@@ -1,10 +1,7 @@
+import { IAuthUseCase } from "@/domain/protocols"
 import { MissingParamError, InvalidParamError } from "../../utils/errors"
 import { badRequest, serverError, unauthorizedError, ok } from "../helpers"
 import { HttpRequest, HttpResponse } from "../protocols"
-
-export interface IAuthUseCase {
-  auth?(email: string, password: string): Promise<string | null | void>
-}
 
 export interface IEmailValidator {
   isValid?(email: string): boolean | void

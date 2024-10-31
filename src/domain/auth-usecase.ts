@@ -1,8 +1,8 @@
-import { IAuthUseCase } from "@/presentation/routers/login-router"
-import { MissingParamError, InvalidParamError } from "@/utils/errors"
+import { InvalidParamError, MissingParamError } from "@/utils/errors"
+import { IAuthUseCase } from "./protocols"
 
 interface ILoadUserByEmailRepository {
-  load?(email: string): Promise<void | null>
+  load?(email: string): Promise<object | null>
 }
 
 export class AuthUseCase implements IAuthUseCase {
@@ -25,9 +25,9 @@ export class AuthUseCase implements IAuthUseCase {
     }
 
     const user = await this.loadUserByEmailRepository?.load!(email)
-
     if (!user) {
       return null
     }
+    return null
   }
 }
