@@ -6,14 +6,19 @@ import {
   ITokenGenerator,
 } from "./protocols"
 
+type AuthUseCaseParams = {
+  loadUserByEmailRepository: ILoadUserByEmailRepository
+  encrypter: IEncrypter
+  tokenGenerator: ITokenGenerator
+}
+
 export class AuthUseCase implements IAuthUseCase {
-  constructor(
-    private readonly loadUserByEmailRepository: ILoadUserByEmailRepository,
-    private readonly encrypter: IEncrypter,
-    private readonly tokenGenerator: ITokenGenerator,
-  ) {}
+  constructor(private readonly dependencies: AuthUseCaseParams) {}
 
   async auth(email?: string, password?: string): Promise<string | null | void> {
+    const { loadUserByEmailRepository, encrypter, tokenGenerator } =
+      this.dependencies
+
     if (!email) {
       throw new MissingParamError("email")
     }
@@ -21,13 +26,12 @@ export class AuthUseCase implements IAuthUseCase {
       throw new MissingParamError("password")
     }
 
-    const user = await this.loadUserByEmailRepository.load!(email)
+    const user = await loadUserByEmailRepository.load!(email)
 
-    const isValid =
-      user && (await this.encrypter.compare(password, user.password!))
+    const isValid = user && (await encrypter.compare(password, user.password!))
 
     if (isValid) {
-      const accessToken = await this.tokenGenerator.generate(user.id!)
+      const accessToken = await tokenGenerator.generate(user.id!)
       return accessToken
     }
     return null
