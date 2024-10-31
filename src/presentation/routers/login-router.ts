@@ -8,8 +8,8 @@ export interface IEmailValidator {
 }
 export class LoginRouter {
   constructor(
-    private readonly authUseCase?: IAuthUseCase,
-    private readonly emailValidator?: IEmailValidator,
+    private readonly authUseCase: IAuthUseCase,
+    private readonly emailValidator: IEmailValidator,
   ) {}
 
   async route(httpRequest?: HttpRequest): Promise<HttpResponse> {
