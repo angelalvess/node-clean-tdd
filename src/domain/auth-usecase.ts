@@ -8,9 +8,9 @@ import {
 
 export class AuthUseCase implements IAuthUseCase {
   constructor(
-    private readonly loadUserByEmailRepository?: ILoadUserByEmailRepository,
-    private readonly encrypter?: IEncrypter,
-    private readonly tokenGenerator?: ITokenGenerator,
+    private readonly loadUserByEmailRepository: ILoadUserByEmailRepository,
+    private readonly encrypter: IEncrypter,
+    private readonly tokenGenerator: ITokenGenerator,
   ) {}
 
   async auth(email?: string, password?: string): Promise<string | null | void> {
@@ -21,19 +21,13 @@ export class AuthUseCase implements IAuthUseCase {
       throw new MissingParamError("password")
     }
 
-    if (!this.loadUserByEmailRepository) {
-      throw new Error()
-    }
-    if (!this.loadUserByEmailRepository.load) {
-      throw new Error()
-    }
-    const user = await this.loadUserByEmailRepository?.load!(email)
+    const user = await this.loadUserByEmailRepository.load!(email)
 
     const isValid =
-      user && (await this.encrypter?.compare(password, user.password!))
+      user && (await this.encrypter.compare(password, user.password!))
 
     if (isValid) {
-      const accessToken = await this.tokenGenerator?.generate(user.id!)
+      const accessToken = await this.tokenGenerator.generate(user.id!)
       return accessToken
     }
 
