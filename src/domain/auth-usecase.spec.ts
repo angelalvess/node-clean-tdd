@@ -46,16 +46,16 @@ const makeLoadUserByEmailRepository = () => {
 const makeTokenGenerator = () => {
   class TokenGeneratorSpy implements ITokenGenerator {
     userId!: string
-    acessToken!: string | null
+    accessToken!: string | null
 
     async generate(userId: string) {
       this.userId = userId
-      return this.acessToken
+      return this.accessToken
     }
   }
 
   const tokenGeneratorSpy = new TokenGeneratorSpy()
-  tokenGeneratorSpy.acessToken = "any_token"
+  tokenGeneratorSpy.accessToken = "any_token"
   return tokenGeneratorSpy
 }
 
@@ -106,20 +106,23 @@ describe("Auth Usecase", () => {
   it("Should return null if invalid email is provided", async () => {
     const { sut, loadUserByEmailRepositorySpy } = makeSut()
     loadUserByEmailRepositorySpy.user = null
-    const acessToken = await sut.auth("invalid_email@gmail.com", "any_password")
+    const accessToken = await sut.auth(
+      "invalid_email@gmail.com",
+      "any_password",
+    )
 
-    expect(acessToken).toBeNull()
+    expect(accessToken).toBeNull()
   })
 
   it("Should return null if invalid password is provided", async () => {
     const { sut, encrypterSpy } = makeSut()
     encrypterSpy.isValid = false
-    const acessToken = await sut.auth(
+    const accessToken = await sut.auth(
       "valid_email@gmail.com",
       "invalid_password",
     )
 
-    expect(acessToken).toBeNull()
+    expect(accessToken).toBeNull()
   })
 
   it("Should call Encrypter with correct values", async () => {
@@ -134,8 +137,19 @@ describe("Auth Usecase", () => {
 
   it("Should call TokenGenerator with correct UserId", async () => {
     const { sut, tokenGeneratorSpy, loadUserByEmailRepositorySpy } = makeSut()
-    await sut.auth("any_email@gmail.com", "any_password")
+    await sut.auth("valid_email@gmail.com", "valid_password")
 
     expect(tokenGeneratorSpy.userId).toBe(loadUserByEmailRepositorySpy.user?.id)
+  })
+
+  it("Should return an accessToken if correct credentials are provided", async () => {
+    const { sut, tokenGeneratorSpy } = makeSut()
+    const accessToken = await sut.auth(
+      "valid_email@gmail.com",
+      "valid_password",
+    )
+
+    expect(accessToken).toBe(tokenGeneratorSpy.accessToken)
+    expect(accessToken).toBeTruthy()
   })
 })
