@@ -10,5 +10,5 @@ export interface ILoadUserByEmailRepository {
 }
 
 export interface IEncrypterSpy {
-  compare(password: string, hashPassword: string): Promise<void>
+  compare(password: string, hashPassword: string): Promise<boolean>
 }

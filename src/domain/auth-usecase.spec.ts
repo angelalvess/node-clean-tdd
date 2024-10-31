@@ -2,19 +2,24 @@ import { MissingParamError } from "@/utils/errors"
 import { AuthUseCase } from "./auth-usecase"
 import { IEncrypterSpy, ILoadUserByEmailRepository } from "./protocols"
 
-const makeSut = () => {
+const makeEncrypter = () => {
   class EncrypterSpy implements IEncrypterSpy {
     password!: string
     hashedPassword!: string
+    isValid!: boolean
 
     async compare(password: string, hashPassword: string) {
       this.password = password
       this.hashedPassword = hashPassword
+      return this.isValid
     }
   }
-
   const encrypterSpy = new EncrypterSpy()
+  encrypterSpy.isValid = true
+  return encrypterSpy
+}
 
+const makeLoadUserByEmailRepository = () => {
   class LoadUserByEmailRepositorySpy implements ILoadUserByEmailRepository {
     user!: { password: string } | null
     email!: string
@@ -29,7 +34,12 @@ const makeSut = () => {
   loadUserByEmailRepositorySpy.user = {
     password: "hashed",
   }
+  return loadUserByEmailRepositorySpy
+}
 
+const makeSut = () => {
+  const encrypterSpy = makeEncrypter()
+  const loadUserByEmailRepositorySpy = makeLoadUserByEmailRepository()
   const sut = new AuthUseCase(loadUserByEmailRepositorySpy, encrypterSpy)
 
   return { sut, loadUserByEmailRepositorySpy, encrypterSpy }
@@ -74,7 +84,8 @@ describe("Auth Usecase", () => {
   })
 
   it("Should return null if invalid password is provided", async () => {
-    const { sut } = makeSut()
+    const { sut, encrypterSpy } = makeSut()
+    encrypterSpy.isValid = false
     const acessToken = await sut.auth(
       "valid_email@gmail.com",
       "invalid_password",
