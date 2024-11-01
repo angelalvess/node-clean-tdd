@@ -15,6 +15,20 @@ describe("Token Generator", () => {
     expect(token).toBeNull()
   })
 
+  it("Should throw if no secret is provided", async () => {
+    const sut = new TokenGenerator()
+    const promise = sut.generate("any_id")
+
+    expect(promise).rejects.toThrow(new MissingParamError("secret"))
+  })
+
+  it("Should throw if no id is provided", async () => {
+    const { sut } = makeSut()
+    const promise = sut.generate()
+
+    expect(promise).rejects.toThrow(new MissingParamError("id"))
+  })
+
   it("Should throw if no params is provided", async () => {
     const { sut } = makeSut()
     expect(sut.generate()).rejects.toThrow(new MissingParamError("id"))
