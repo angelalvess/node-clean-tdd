@@ -17,3 +17,7 @@ export interface IEncrypter {
 export interface ITokenGenerator {
   generate?(userId: string): Promise<string | null | void>
 }
+
+export interface IUpdateAccessTokenRepository {
+  update(userId: string, acessToken: string): Promise<void>
+}

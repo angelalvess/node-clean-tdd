@@ -4,10 +4,12 @@ import {
   IEncrypter,
   ILoadUserByEmailRepository,
   ITokenGenerator,
+  IUpdateAccessTokenRepository,
 } from "./protocols"
 
 type AuthUseCaseParams = {
   loadUserByEmailRepository?: ILoadUserByEmailRepository
+  updateAccessTokenRepository: IUpdateAccessTokenRepository
   encrypter?: IEncrypter
   tokenGenerator?: ITokenGenerator
 }
@@ -18,8 +20,12 @@ export class AuthUseCase implements IAuthUseCase {
   ) {}
 
   async auth(email?: string, password?: string): Promise<string | null | void> {
-    const { loadUserByEmailRepository, encrypter, tokenGenerator } =
-      this.dependencies
+    const {
+      loadUserByEmailRepository,
+      encrypter,
+      tokenGenerator,
+      updateAccessTokenRepository,
+    } = this.dependencies
 
     if (!email) {
       throw new MissingParamError("email")
@@ -35,6 +41,7 @@ export class AuthUseCase implements IAuthUseCase {
 
     if (isValid) {
       const accessToken = await tokenGenerator!.generate!(user.id!)
+      await updateAccessTokenRepository.update(user.id!, accessToken!)
       return accessToken
     }
     return null
