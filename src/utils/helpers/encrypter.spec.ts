@@ -1,12 +1,5 @@
 import { bcrypt } from "@/__mocks__/mock-bcrypt"
-
-class Encrypter {
-  async compare(value: string, hash: string) {
-    const isValid = await bcrypt.compare(value, hash)
-
-    return isValid
-  }
-}
+import { Encrypter } from "./encrypter"
 
 const makeSut = () => {
   const sut = new Encrypter()
