@@ -1,15 +1,6 @@
-import { ITokenGenerator } from "@/domain/protocols/index"
 import { MissingParamError } from "../errors"
 import { jwt } from "@/__mocks__/mock-jsonwebtoken"
-class TokenGenerator implements ITokenGenerator {
-  async generate(id?: string) {
-    if (!id) {
-      throw new MissingParamError("id")
-    }
-    const token = await jwt.sign(id, "secret")
-    return token
-  }
-}
+import { TokenGenerator } from "./token-generator"
 
 const makeSut = () => {
   const sut = new TokenGenerator()
