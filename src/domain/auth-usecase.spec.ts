@@ -30,8 +30,8 @@ const makeEncrypterWithError = () => {
       throw new Error()
     }
   }
-  const encrypterSpy = new EncrypterSpy()
-  return encrypterSpy
+
+  return new EncrypterSpy()
 }
 
 const makeLoadUserByEmailRepository = () => {
@@ -59,8 +59,7 @@ const makeLoadUserByEmailRepositoryWithError = () => {
       throw new Error()
     }
   }
-  const loadUserByEmailRepositorySpy = new LoadUserByEmailRepositorySpy()
-  return loadUserByEmailRepositorySpy
+  return new LoadUserByEmailRepositorySpy()
 }
 
 const makeTokenGenerator = () => {
@@ -86,8 +85,7 @@ const makeTokenGeneratorWithError = () => {
     }
   }
 
-  const tokenGeneratorSpy = new TokenGeneratorSpy()
-  return tokenGeneratorSpy
+  return new TokenGeneratorSpy()
 }
 
 const makeSut = () => {
