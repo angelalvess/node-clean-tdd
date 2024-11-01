@@ -1,5 +1,6 @@
 import { EmailValidator } from "./email-validator"
 import { validator } from "../../__mocks__/mock-validator"
+import { MissingParamError } from "../errors"
 
 const makeSut = () => {
   return new EmailValidator()
@@ -18,6 +19,7 @@ describe("Email Validator", () => {
     validator.isEmailValid = false
 
     const isEmailValid = sut.isValid("invalid_email@gmail.com")
+
     expect(isEmailValid).toBe(false)
   })
 
@@ -25,6 +27,13 @@ describe("Email Validator", () => {
     const sut = makeSut()
 
     sut.isValid("any_email@gmail.com")
+
     expect(validator.email).toBe("any_email@gmail.com")
+  })
+
+  it("Should throw if no email is provided", () => {
+    const sut = makeSut()
+
+    expect(sut.isValid).toThrow(new MissingParamError("email"))
   })
 })
