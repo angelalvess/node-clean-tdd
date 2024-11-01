@@ -68,6 +68,16 @@ const makeUpdateAcessTokenRepository = () => {
   return new UpdateAcessTokenRepositorySpy()
 }
 
+const makeUpdateAcessTokenRepositoryWithError = () => {
+  class UpdateAcessTokenRepositorySpy {
+    async update() {
+      throw new Error()
+    }
+  }
+
+  return new UpdateAcessTokenRepositorySpy()
+}
+
 const makeLoadUserByEmailRepositoryWithError = () => {
   class LoadUserByEmailRepositorySpy {
     async load() {
@@ -153,7 +163,7 @@ describe("Auth Usecase", () => {
     expect(promise).rejects.toThrow()
   })
 
-  it("Should throw if  no LoadUserByEmailRepository is provided", async () => {
+  it("Should throw if no LoadUserByEmailRepository is provided", async () => {
     const { encrypterSpy, tokenGeneratorSpy, updateAccessTokenRepositorySpy } =
       makeSut()
     const sut = new AuthUseCase({
@@ -166,7 +176,7 @@ describe("Auth Usecase", () => {
     expect(promise).rejects.toThrow()
   })
 
-  it("Should throw if  LoadUserByEmailRepository has no load method", async () => {
+  it("Should throw if LoadUserByEmailRepository has no load method", async () => {
     const { encrypterSpy, tokenGeneratorSpy, updateAccessTokenRepositorySpy } =
       makeSut()
     const sut = new AuthUseCase({
@@ -180,7 +190,7 @@ describe("Auth Usecase", () => {
     expect(promise).rejects.toThrow()
   })
 
-  it("Should throw if  no Encrypter is provided", async () => {
+  it("Should throw if no Encrypter is provided", async () => {
     const sut = new AuthUseCase({
       updateAccessTokenRepository: makeUpdateAcessTokenRepository(),
       loadUserByEmailRepository: makeLoadUserByEmailRepository(),
@@ -191,7 +201,7 @@ describe("Auth Usecase", () => {
     expect(promise).rejects.toThrow()
   })
 
-  it("Should throw if  Encrypter has no compare method", async () => {
+  it("Should throw if Encrypter has no compare method", async () => {
     const sut = new AuthUseCase({
       encrypter: {},
       updateAccessTokenRepository: makeUpdateAcessTokenRepository(),
@@ -203,7 +213,7 @@ describe("Auth Usecase", () => {
     expect(promise).rejects.toThrow()
   })
 
-  it("Should throw if  no TokenGenerator is provided", async () => {
+  it("Should throw if no TokenGenerator is provided", async () => {
     const sut = new AuthUseCase({
       encrypter: makeEncrypter(),
       updateAccessTokenRepository: makeUpdateAcessTokenRepository(),
@@ -214,11 +224,34 @@ describe("Auth Usecase", () => {
     expect(promise).rejects.toThrow()
   })
 
-  it("Should throw if  TokenGenerator has no generate method", async () => {
+  it("Should throw if TokenGenerator has no generate method", async () => {
     const sut = new AuthUseCase({
       encrypter: makeEncrypter(),
       updateAccessTokenRepository: makeUpdateAcessTokenRepository(),
       tokenGenerator: {},
+      loadUserByEmailRepository: makeLoadUserByEmailRepository(),
+    })
+    const promise = sut.auth("any_email@gmail.com", "any_password")
+
+    expect(promise).rejects.toThrow()
+  })
+
+  it("Should throw if no UpdateAccessTokenRepository is provided", async () => {
+    const sut = new AuthUseCase({
+      encrypter: makeEncrypter(),
+      tokenGenerator: makeTokenGenerator(),
+      loadUserByEmailRepository: makeLoadUserByEmailRepository(),
+    })
+    const promise = sut.auth("any_email@gmail.com", "any_password")
+
+    expect(promise).rejects.toThrow()
+  })
+
+  it("Should throw if UpdateAccessTokenRepository has no update method", async () => {
+    const sut = new AuthUseCase({
+      encrypter: makeEncrypter(),
+      updateAccessTokenRepository: {},
+      tokenGenerator: makeTokenGenerator(),
       loadUserByEmailRepository: makeLoadUserByEmailRepository(),
     })
     const promise = sut.auth("any_email@gmail.com", "any_password")
@@ -325,6 +358,20 @@ describe("Auth Usecase", () => {
       encrypter: makeEncrypter(),
       tokenGenerator: tokenGeneratorSpy,
     })
+    const promise = sut.auth("any_email@gmail.com", "any_password")
+    expect(promise).rejects.toThrow()
+  })
+
+  it("Should throw if UpdateAccessTokenRepository throws", async () => {
+    const makeUpdateAcessTokenRepositorySpy =
+      makeUpdateAcessTokenRepositoryWithError()
+    const sut = new AuthUseCase({
+      updateAccessTokenRepository: makeUpdateAcessTokenRepositorySpy,
+      loadUserByEmailRepository: makeLoadUserByEmailRepository(),
+      encrypter: makeEncrypter(),
+      tokenGenerator: makeTokenGenerator(),
+    })
+
     const promise = sut.auth("any_email@gmail.com", "any_password")
     expect(promise).rejects.toThrow()
   })

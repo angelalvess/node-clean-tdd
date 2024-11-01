@@ -9,7 +9,7 @@ import {
 
 type AuthUseCaseParams = {
   loadUserByEmailRepository?: ILoadUserByEmailRepository
-  updateAccessTokenRepository: IUpdateAccessTokenRepository
+  updateAccessTokenRepository?: IUpdateAccessTokenRepository
   encrypter?: IEncrypter
   tokenGenerator?: ITokenGenerator
 }
@@ -41,7 +41,7 @@ export class AuthUseCase implements IAuthUseCase {
 
     if (isValid) {
       const accessToken = await tokenGenerator!.generate!(user.id!)
-      await updateAccessTokenRepository.update(user.id!, accessToken!)
+      await updateAccessTokenRepository!.update!(user.id!, accessToken!)
       return accessToken
     }
     return null

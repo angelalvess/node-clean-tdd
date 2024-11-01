@@ -19,5 +19,5 @@ export interface ITokenGenerator {
 }
 
 export interface IUpdateAccessTokenRepository {
-  update(userId: string, acessToken: string): Promise<void>
+  update?(userId: string, acessToken: string): Promise<void>
 }
