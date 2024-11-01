@@ -3,8 +3,8 @@ import { AuthUseCase } from "./auth-usecase"
 import {
   IEncrypter,
   ILoadUserByEmailRepository,
-  ITokenGenerator,
   User,
+  ITokenGenerator,
 } from "./protocols"
 
 const makeEncrypter = () => {
@@ -98,6 +98,16 @@ describe("Auth Usecase", () => {
   it("Shound throw if no dependencies are provided", async () => {
     const sut = new AuthUseCase()
     const promise = sut.auth("any_email@gmail.com", "any_password")
+    expect(promise).rejects.toThrow()
+  })
+
+  it("Should throw if  no LoadUserByEmailRepository is provided", async () => {
+    const { encrypterSpy, tokenGeneratorSpy } = makeSut()
+    const sut = new AuthUseCase({
+      encrypter: encrypterSpy,
+      tokenGenerator: tokenGeneratorSpy,
+    })
+    const promise = sut.auth("any_email@gmail.com", "any_password")
 
     expect(promise).rejects.toThrow()
   })
@@ -108,6 +118,48 @@ describe("Auth Usecase", () => {
       encrypter: encrypterSpy,
       tokenGenerator: tokenGeneratorSpy,
       loadUserByEmailRepository: {},
+    })
+    const promise = sut.auth("any_email@gmail.com", "any_password")
+
+    expect(promise).rejects.toThrow()
+  })
+
+  it("Should throw if  no Encrypter is provided", async () => {
+    const sut = new AuthUseCase({
+      loadUserByEmailRepository: makeLoadUserByEmailRepository(),
+      tokenGenerator: makeTokenGenerator(),
+    })
+    const promise = sut.auth("any_email@gmail.com", "any_password")
+
+    expect(promise).rejects.toThrow()
+  })
+
+  it("Should throw if  Encrypter has no compare method", async () => {
+    const sut = new AuthUseCase({
+      encrypter: {},
+      tokenGenerator: makeTokenGenerator(),
+      loadUserByEmailRepository: makeLoadUserByEmailRepository(),
+    })
+    const promise = sut.auth("any_email@gmail.com", "any_password")
+
+    expect(promise).rejects.toThrow()
+  })
+
+  it("Should throw if  no TokenGenerator is provided", async () => {
+    const sut = new AuthUseCase({
+      encrypter: makeEncrypter(),
+      loadUserByEmailRepository: makeLoadUserByEmailRepository(),
+    })
+    const promise = sut.auth("any_email@gmail.com", "any_password")
+
+    expect(promise).rejects.toThrow()
+  })
+
+  it("Should throw if  TokenGenerator has no generate method", async () => {
+    const sut = new AuthUseCase({
+      encrypter: makeEncrypter(),
+      tokenGenerator: {},
+      loadUserByEmailRepository: makeLoadUserByEmailRepository(),
     })
     const promise = sut.auth("any_email@gmail.com", "any_password")
 

@@ -7,9 +7,9 @@ import {
 } from "./protocols"
 
 type AuthUseCaseParams = {
-  loadUserByEmailRepository: ILoadUserByEmailRepository
-  encrypter: IEncrypter
-  tokenGenerator: ITokenGenerator
+  loadUserByEmailRepository?: ILoadUserByEmailRepository
+  encrypter?: IEncrypter
+  tokenGenerator?: ITokenGenerator
 }
 
 export class AuthUseCase implements IAuthUseCase {
@@ -28,12 +28,13 @@ export class AuthUseCase implements IAuthUseCase {
       throw new MissingParamError("password")
     }
 
-    const user = await loadUserByEmailRepository.load!(email)
+    const user = await loadUserByEmailRepository!.load!(email)
 
-    const isValid = user && (await encrypter.compare(password, user.password!))
+    const isValid =
+      user && (await encrypter!.compare!(password, user.password!))
 
     if (isValid) {
-      const accessToken = await tokenGenerator.generate(user.id!)
+      const accessToken = await tokenGenerator!.generate!(user.id!)
       return accessToken
     }
     return null

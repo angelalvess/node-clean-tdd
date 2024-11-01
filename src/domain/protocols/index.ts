@@ -11,9 +11,9 @@ export interface ILoadUserByEmailRepository {
 }
 
 export interface IEncrypter {
-  compare(password: string, hashPassword: string): Promise<boolean>
+  compare?(password: string, hashPassword: string): Promise<boolean>
 }
 
 export interface ITokenGenerator {
-  generate(userId: string): Promise<string | null>
+  generate?(userId: string): Promise<string | null>
 }
