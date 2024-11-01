@@ -1,4 +1,4 @@
-import { validator } from "../__mocks__/mock-validator"
+import { validator } from "../../__mocks__/mock-validator"
 
 export class EmailValidator {
   email?: string

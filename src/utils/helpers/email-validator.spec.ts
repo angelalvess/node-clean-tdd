@@ -1,5 +1,5 @@
 import { EmailValidator } from "./email-validator"
-import { validator } from "../__mocks__/mock-validator"
+import { validator } from "../../__mocks__/mock-validator"
 
 const makeSut = () => {
   return new EmailValidator()
