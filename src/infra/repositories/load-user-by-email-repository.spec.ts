@@ -18,6 +18,10 @@ describe("LoadUserByEmail Repository", () => {
     db = await client.db()
   })
 
+  beforeEach(async () => {
+    await db.collection("users").deleteMany({})
+  })
+
   afterAll(async () => {
     await client.close()
   })
