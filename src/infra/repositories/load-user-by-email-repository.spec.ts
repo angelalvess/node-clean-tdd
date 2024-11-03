@@ -1,4 +1,8 @@
 import { Collection, MongoClient, Document, Db } from "mongodb"
+import { beforeEach } from "node:test"
+
+let client: MongoClient
+let db: Db
 
 class LoadUserByEmailRepository {
   constructor(private readonly userModel: Collection<Document>) {}
@@ -9,13 +13,16 @@ class LoadUserByEmailRepository {
   }
 }
 
-describe("LoadUserByEmail Repository", () => {
-  let client: MongoClient
-  let db: Db
+const makeSut = () => {
+  const userModel = db.collection("users")
+  const sut = new LoadUserByEmailRepository(userModel)
+  return { sut, userModel }
+}
 
+describe("LoadUserByEmail Repository", () => {
   beforeAll(async () => {
     client = await MongoClient.connect(process.env.MONGO_URL as string, {})
-    db = await client.db()
+    db = client.db()
   })
 
   beforeEach(async () => {
@@ -27,16 +34,14 @@ describe("LoadUserByEmail Repository", () => {
   })
 
   it("Should return null if no user is found ", async () => {
-    const userModel = db.collection("users")
-    const sut = new LoadUserByEmailRepository(userModel)
+    const { sut } = makeSut()
     const user = await sut.load("invalid_email@gmail.com")
     expect(user).toBeNull()
   })
 
   it("Should return an user if user is found ", async () => {
-    const userModel = db.collection("users")
+    const { userModel, sut } = makeSut()
     await userModel.insertOne({ email: "valid_email@gmail.com" })
-    const sut = new LoadUserByEmailRepository(userModel)
     const user = await sut.load("valid_email@gmail.com")
     expect(user!.email).toBe("valid_email@gmail.com")
   })
