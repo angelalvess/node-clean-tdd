@@ -1,5 +1,5 @@
-import { ILoadUserByEmailRepository } from "@/domain/protocols"
 import { MissingParamError } from "@/utils/errors"
+import { ILoadUserByEmailRepository } from "@/utils/protocols"
 import { Collection, Document } from "mongodb"
 
 export class LoadUserByEmailRepository implements ILoadUserByEmailRepository {

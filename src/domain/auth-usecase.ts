@@ -1,11 +1,10 @@
 import { MissingParamError } from "@/utils/errors"
+import { IAuthUseCase, IEncrypter } from "./protocols"
 import {
-  IAuthUseCase,
-  IEncrypter,
   ILoadUserByEmailRepository,
-  ITokenGenerator,
   IUpdateAccessTokenRepository,
-} from "./protocols"
+  ITokenGenerator,
+} from "@/utils/protocols"
 
 type AuthUseCaseParams = {
   loadUserByEmailRepository?: ILoadUserByEmailRepository

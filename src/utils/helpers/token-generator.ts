@@ -1,6 +1,6 @@
 import { jwt } from "@/__mocks__/mock-jsonwebtoken"
-import { ITokenGenerator } from "@/domain/protocols"
 import { MissingParamError } from "../errors"
+import { ITokenGenerator } from "../protocols"
 
 export class TokenGenerator implements ITokenGenerator {
   constructor(public readonly secret?: string) {}
