@@ -17,6 +17,6 @@ export class LoadUserByEmailRepository {
         },
       },
     )
-    return user ? user : null
+    return user
   }
 }
