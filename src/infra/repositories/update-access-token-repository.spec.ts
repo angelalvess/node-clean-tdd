@@ -1,38 +1,11 @@
-import {
-  MongoClient,
-  Db,
-  Collection,
-  Document,
-  Condition,
-  ObjectId,
-} from "mongodb"
+import { MongoClient, Db } from "mongodb"
 import { beforeEach } from "node:test"
 import { MongoHelper } from "../helpers/mongo-helper"
 import { MissingParamError } from "@/utils/errors"
+import { UpdateAccessTokenRepository } from "./update-access-token-repository"
 
 let client: MongoClient
 let db: Db
-
-class UpdateAccessTokenRepository {
-  constructor(private readonly userModel?: Collection<Document>) {}
-  async update(userId?: Condition<ObjectId> | undefined, accessToken?: string) {
-    if (!userId) {
-      throw new MissingParamError("userId")
-    }
-
-    if (!accessToken) {
-      throw new MissingParamError("accessToken")
-    }
-    await this.userModel!.updateOne(
-      { _id: userId },
-      {
-        $set: {
-          accessToken,
-        },
-      },
-    )
-  }
-}
 
 const makeSut = () => {
   const userModel = db.collection("users")
