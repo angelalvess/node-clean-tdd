@@ -1,8 +1,8 @@
 import { MongoClient, Db } from "mongodb"
-import { beforeEach } from "node:test"
 import { MongoHelper } from "../helpers/mongo-helper"
 import { MissingParamError } from "@/utils/errors"
 import { UpdateAccessTokenRepository } from "./update-access-token-repository"
+import { createFakeUser } from "@/utils/helpers/create-faker-user"
 
 let client: MongoClient
 let db: Db
@@ -20,46 +20,39 @@ describe("UpdateAccessToken Repository", () => {
   })
 
   beforeEach(async () => {
-    await db.collection("users").deleteMany({})
+    await db.collection("users").deleteMany()
   })
 
   afterAll(async () => {
     await MongoHelper.disconnect()
   })
+
   it("Should update the user with the given accessToken ", async () => {
     const { sut, userModel } = makeSut()
-    const fakeUser = await userModel.insertOne({
-      email: "valid_email@gmail.com",
-      password: "hashed_password",
-    })
+    const fakeUserId = await createFakeUser(userModel)
 
-    await sut.update(fakeUser.insertedId, "valid_token")
+    await sut.update(fakeUserId, "valid_token")
     const updatedFakeUser = await userModel.findOne({
-      _id: fakeUser.insertedId,
+      _id: fakeUserId,
     })
     expect(updatedFakeUser!.accessToken).toBe("valid_token")
   })
   it("Should throw if no userModel is provided", async () => {
     const { userModel } = makeSut()
     const sut = new UpdateAccessTokenRepository()
-    const fakeUser = await userModel.insertOne({
-      email: "valid_email@gmail.com",
-      password: "hashed_password",
-    })
-    const promise = sut.update(fakeUser.insertedId, "valid_token")
+    const fakeUserId = await createFakeUser(userModel)
+
+    const promise = sut.update(fakeUserId, "valid_token")
 
     expect(promise).rejects.toThrow()
   })
 
   it("Should throw if no params is provided", async () => {
     const { sut, userModel } = makeSut()
-    const fakeUser = await userModel.insertOne({
-      email: "valid_email@gmail.com",
-      password: "hashed_password",
-    })
+    const fakeUserId = await createFakeUser(userModel)
 
     expect(sut.update()).rejects.toThrow(new MissingParamError("userId"))
-    expect(sut.update(fakeUser.insertedId)).rejects.toThrow(
+    expect(sut.update(fakeUserId)).rejects.toThrow(
       new MissingParamError("accessToken"),
     )
   })
