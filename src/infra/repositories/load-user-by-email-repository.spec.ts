@@ -2,6 +2,7 @@ import { MongoClient, Db } from "mongodb"
 import { beforeEach } from "node:test"
 import { LoadUserByEmailRepository } from "./load-user-by-email-repository"
 import { MongoHelper } from "../helpers/mongo-helper"
+import { MissingParamError } from "@/utils/errors"
 
 let client: MongoClient
 let db: Db
@@ -50,5 +51,11 @@ describe("LoadUserByEmail Repository", () => {
     const sut = new LoadUserByEmailRepository()
     const promise = sut.load("any_email@gmail.com")
     expect(promise).rejects.toThrow()
+  })
+
+  it("Should throw if no email is provided", async () => {
+    const { sut } = makeSut()
+    const promise = sut.load()
+    expect(promise).rejects.toThrow(new MissingParamError("email"))
   })
 })
