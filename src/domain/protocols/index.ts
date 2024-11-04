@@ -1,3 +1,5 @@
+import { Document, WithId } from "mongodb"
+
 export interface IAuthUseCase {
   auth?(email: string, password: string): Promise<string | null | void>
 }
@@ -7,7 +9,7 @@ export interface User {
   id?: string
 }
 export interface ILoadUserByEmailRepository {
-  load?(email: string): Promise<User | null | void>
+  load?(email: string): Promise<WithId<Document> | User | null | void>
 }
 
 export interface IEncrypter {

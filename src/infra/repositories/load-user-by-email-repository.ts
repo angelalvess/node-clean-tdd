@@ -1,7 +1,8 @@
+import { ILoadUserByEmailRepository } from "@/domain/protocols"
 import { MissingParamError } from "@/utils/errors"
 import { Collection, Document } from "mongodb"
 
-export class LoadUserByEmailRepository {
+export class LoadUserByEmailRepository implements ILoadUserByEmailRepository {
   constructor(private readonly userModel?: Collection<Document>) {}
 
   async load(email?: string) {
