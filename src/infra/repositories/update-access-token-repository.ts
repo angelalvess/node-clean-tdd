@@ -11,6 +11,7 @@ export class UpdateAccessTokenRepository {
     if (!accessToken) {
       throw new MissingParamError("accessToken")
     }
+
     await this.userModel!.updateOne(
       { _id: userId },
       {
