@@ -35,6 +35,7 @@ describe("UpdateAccessToken Repository", () => {
     const updatedFakeUser = await userModel.findOne({
       _id: fakeUserId,
     })
+
     expect(updatedFakeUser!.accessToken).toBe("valid_token")
   })
 
